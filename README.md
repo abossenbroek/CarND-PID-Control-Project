@@ -25,6 +25,15 @@ We see that the 0.3, 0.005 and 0.8 for respectively the $K_p$, $K_i$ and $K_d$ p
 error after 500 calls to the PID. This is consistent with the behaviour that we observe it the simulator; the
 car is able to fulfil a complete round and drives stable.
 
+## Reflection
+We noted that it is important to start with low values for the PID control parameters. Having too high values
+causes the car to oscillate on the track and quickly leave the track. Moreover, we had to limit the integral portion
+of the PID. To achieve this we use a circular buffer. This buffer discards the oldest data when pushing new data on it. 
+We also faced some challenges when calculating the time between two measurements. The standard C `clock` did not give sufficient
+time difference between two control calls. We addressed this by using `chrono`, which was able to give us much more accurate time readings.
+
+We investigated the use of methods such as the Twiddle algorithm and the Ziegler-Nichols algorithm but found both to be difficult to 
+implement in an online PID control system where some of the outliers can cause the system to ill behave i.e. the car going of the track.
 
 
 ## Dependencies

@@ -3,6 +3,30 @@ Self-Driving Car Engineer Nanodegree Program
 
 ---
 
+## Optimization
+A PID controller has three parameters that need to be tuned. Several methods exist for tuning these parameters.
+Since our PID is online it is more difficult to tune it, especially if it overshoots. Overshooting will cause
+the car in the simulator to leave the track and be unable to recover. As a result we resort to manual tuning.
+
+We allow manual tuning through three parameters that can be passed to the `pid` executable. We also added to the
+output of the `pid` executable information about the average error and number of calls that were made so that
+we could make meaningful comparisons.
+
+We found the following results,
+
+| AVG Error | $K_p$ | $K_i$ | $K_d$ |
+|:----------|:-----:|:-----:|:-----:|
+| 0.243287  | 0.25  | 0.005 | 0.8   |
+| 0.408701  | 0.25  | 0.005 | 1.6   |
+| 0.122862  | 0.30  | 0.005 | 0.8   |
+| 0.286884  | 0.35  | 0.005 | 0.8   |
+
+We see that the 0.3, 0.005 and 0.8 for respectively the $K_p$, $K_i$ and $K_d$ parameters lead to the lowest average
+error after 500 calls to the PID. This is consistent with the behaviour that we observe it the simulator; the
+car is able to fulfil a complete round and drives stable.
+
+
+
 ## Dependencies
 
 * cmake >= 3.5

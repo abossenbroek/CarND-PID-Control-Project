@@ -25,10 +25,13 @@ public:
     std::chrono::high_resolution_clock::time_point time_last_error;
     boost::circular_buffer<double>* error_i_window;
 
+    unsigned long num_calls;
+    long double total_error;
+
     /*
     * Constructor
     */
-    PID();
+    PID(unsigned int window_size);
 
     /*
     * Destructor.
@@ -49,6 +52,21 @@ public:
     * Calculate the total PID error.
     */
     double TotalError();
+
+    /*
+     * Get control value.
+     */
+    double GetControl();
+
+    /*
+     * Get average error.
+     */
+    double AverageError();
+
+    /*
+     * Get number of updates.
+     */
+    unsigned long GetNumUpdates();
 };
 
 #endif /* PID_H */

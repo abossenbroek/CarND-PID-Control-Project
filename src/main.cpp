@@ -28,13 +28,26 @@ std::string hasData(std::string s) {
   return "";
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+  double Kp, Kd, Ki;
+
+  if (argc == 4) {
+    Kp = std::stod(argv[1]);
+    Kd = std::stod(argv[2]);
+    Ki = std::stod(argv[3]);
+  } else {
+    // Found through manual tuning.
+    Kp = 0.3;
+    Kd = 0.8;
+    Ki = 0.005;
+  }
+
   uWS::Hub h;
 
-  PID pid;
+  PID pid(50);
   // Selected the parameters using Twiddle algorithm.
-  pid.Init(1.0, 1.0, 0.4931604163945451);
+  pid.Init(Kp, Ki, Kd);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -54,14 +67,15 @@ int main()
 
           pid.UpdateError(cte);
 
-          double steer_value = pid.TotalError();
+          double steer_value = pid.GetControl();
 
           // Ensure that the steer value is within [-1, 1] bounds
           if (steer_value < -1) steer_value = -1;
           if (steer_value > 1) steer_value = 1;
 
           // DEBUG
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+          std::cout << "CTE: " << cte << " Steering Value: " << steer_value
+                    << "\t@ " << pid.GetNumUpdates() << " AVG Error: " << pid.AverageError() <<  std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;

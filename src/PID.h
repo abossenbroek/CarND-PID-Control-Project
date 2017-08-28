@@ -2,8 +2,7 @@
 #define PID_H
 
 #include <chrono>
-
-#include "boost/circular_buffer.hpp"
+#include <deque>
 
 class PID {
 public:
@@ -23,10 +22,11 @@ public:
 
     bool first_update;
     std::chrono::high_resolution_clock::time_point time_last_error;
-    boost::circular_buffer<double>* error_i_window;
+    std::deque<double>* error_i_window;
 
     unsigned long num_calls;
     long double total_error;
+    unsigned int window_size_;
 
     /*
     * Constructor

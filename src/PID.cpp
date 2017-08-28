@@ -2,19 +2,18 @@
 
 #include <numeric>
 
-// TODO: remove
-#include <iostream>
 using namespace std;
 
 using namespace std::chrono;
 
-PID::PID(unsigned int window_size) {
-  p_error = 0;
-  i_error = 0;
-  d_error = 0;
-  first_update = true;
+PID::PID(unsigned int window_size) :
+    p_error(0),
+    i_error(0),
+    d_error(0),
+    first_update(true),
+    window_size_(window_size) {
   time_last_error = high_resolution_clock::now();
-  error_i_window = new boost::circular_buffer<double>(window_size);
+  error_i_window = new deque<double>();
 }
 
 PID::~PID() {
@@ -46,15 +45,14 @@ void PID::UpdateError(double cte) {
   d_error = (cte - p_error) / dt.count();
 
   // Add the error to the integral of the error.
-  error_i_window->push_back(cte);
+  if (error_i_window->size() == window_size_) error_i_window->pop_back();
+  error_i_window->push_front(cte);
   i_error = accumulate(error_i_window->begin(), error_i_window->end(), 0.);
   // Safe the proportional part of the error.
   p_error = cte;
 
   num_calls++;
   total_error += cte;
-
-  cerr << "DEBUG p_error: " << p_error << "\td_error: " << d_error << "\ti_error: " << i_error << endl;
 }
 
 double PID::TotalError() {
